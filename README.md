@@ -55,7 +55,7 @@ PASS/
 ```
 ## Components
 
-1. Offline CPU profiler
+ 1. Offline CPU profiler
 
 The `cpu_model/` directory contains the offline profiler used to build CPU power-control policies for PASS.
 
@@ -72,9 +72,9 @@ cpu_model/single_socket/
 cpu_model/single_socket_dvfs/
 cpu_model/multi_sockets/
 ```
-After profiling, copy the generated CPU policy file, such as policy.csv, to the directory where the PASS online controller runs.
+After profiling, copy the generated CPU policy file, such as `policy.csv`, to the directory where the PASS online controller runs.
 
-2. Online controller
+ 2. Online controller
 
 The `online_controller/` directory contains the runtime PASS controller.
 
@@ -88,7 +88,7 @@ online_controller/policy.csv
 
 `google_thunderbolt.py` provides CPU-bandwidth-control baseline of Google's [Thunderbolt](https://research.google/pubs/thunderbolt-throughput-optimized-quality-of-service-aware-power-capping-at-scale/) implementation.
 
-3. fio experiments
+ 3. fio experiments
 
 The `pass_fio_experiments/` directory contains fio-based experiments.
 ```
@@ -97,7 +97,7 @@ pass_fio_experiments/microbenchmark/
 ```
 These scripts are used to reproduce the motivation and microbenchmark results from the paper.
 
-4. Application benchmarks
+ 4. Application benchmarks
 
 The `pass_application_benchmarks/` directory contains application-level benchmark scripts.
 ```
