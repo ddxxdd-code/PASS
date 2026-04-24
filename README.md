@@ -1,3 +1,112 @@
+# PASS: a Power-Adaptive Storage Server
+This repository contains the artifact for **PASS: A Power-Adaptive Storage Server**.
+
+PASS is a storage-server power-control system that adapts storage-stack resource allocation to a target power budget. It combines an offline CPU profiling stage, SSD power model, with an online controller that coordinates CPU and SSD resource control for SPDK-based NVMe-oF storage servers.
+
+The repository includes:
+
+- An offline CPU profiler for deriving CPU power-control policies.
+- An online PASS controller for enforcing server-level power budgets.
+- Baseline control scripts, including a Google Thunderbolt-style CPU-bandwidth controller.
+- SPDK NVMe-oF configuration examples.
+- fio microbenchmarks and application benchmark scripts.
+- Artifact-evaluation instructions and reference outputs.
+
+## Repository structure
+
+```text
+PASS/
+├── README.md
+├── LICENSE
+├── run_all_experiments.sh
+├── artifact_evaluation_appendix.pdf
+├── artifact_evaluation_instructions.md
+│
+├── SPDK_config/
+│   └── SPDK/NVMe-oF target configuration files
+│
+├── cpu_model/
+│   ├── Offline CPU power profiling tools
+│   ├── single_socket/
+│   ├── single_socket_dvfs/
+│   └── multi_sockets/
+│
+├── online_controller/
+│   ├── powercap_PASS_profile_based.py
+│   ├── google_thunderbolt.py
+│   └── policy.csv
+│
+├── pass_fio_experiments/
+│   ├── motivation/
+│   └── microbenchmark/
+│
+├── pass_application_benchmarks/
+│   ├── filebench/
+│   ├── db_bench/
+│   └── YCSB/
+│
+├── fio/
+├── filebench/
+├── db_bench/
+├── YCSB/
+│
+└── utils/
+    └── Utility scripts, including NVMe-oF connection helpers
+```
+## Components
+
+1. Offline CPU profiler
+
+The `cpu_model/` directory contains the offline profiler used to build CPU power-control policies for PASS.
+
+The profiler measures CPU power behavior under controlled polling workloads and produces a policy file used by the online controller.
+
+Typical workflow:
+```bash
+cd cpu_model
+sudo ./run.sh
+```
+For machine-specific configurations, use the corresponding profiling subdirectory:
+```
+cpu_model/single_socket/
+cpu_model/single_socket_dvfs/
+cpu_model/multi_sockets/
+```
+After profiling, copy the generated CPU policy file, such as policy.csv, to the directory where the PASS online controller runs.
+
+2. Online controller
+
+The `online_controller/` directory contains the runtime PASS controller.
+
+Important files:
+```
+online_controller/powercap_PASS_profile_based.py
+online_controller/google_thunderbolt.py
+online_controller/policy.csv
+```
+`powercap_PASS_profile_based.py` is the main PASS online controller. It reads a power budget, monitors the storage server, and applies CPU and SSD control decisions according to the profiled policy.
+
+`google_thunderbolt.py` provides CPU-bandwidth-control baseline of Google's [Thunderbolt](https://research.google/pubs/thunderbolt-throughput-optimized-quality-of-service-aware-power-capping-at-scale/) implementation.
+
+3. fio experiments
+
+The `pass_fio_experiments/` directory contains fio-based experiments.
+```
+pass_fio_experiments/motivation/
+pass_fio_experiments/microbenchmark/
+```
+These scripts are used to reproduce the motivation and microbenchmark results from the paper.
+
+4. Application benchmarks
+
+The `pass_application_benchmarks/` directory contains application-level benchmark scripts.
+```
+pass_application_benchmarks/filebench/
+pass_application_benchmarks/db_bench/
+pass_application_benchmarks/YCSB/
+```
+These benchmarks evaluate PASS with representative storage workloads, including Filebench, RocksDB db_bench, and YCSB.
+
 ## PASS Artifact Evaluation
 This directory contains artifact for evaluating the PASS system described in the paper: PASS: A Power Adaptive Storage Server.
 
@@ -116,6 +225,46 @@ It also assumes that the target machine listens on IP address `192.168.3.50` for
 The minimum size needed for the disk is about 1 TiB while we recommend using larger disks like 3.84 TiB in our setup.
 
 To run PASS, the SPDK 23.09+ version is needed. Please get the source of SPDK and compile with RDMA support.
+
+## Common troubleshooting
+
+### SPDK cannot find NVMe devices
+
+Check whether the devices are bound to the correct driver:
+```bash
+sudo ./scripts/setup.sh status
+```
+Re-run SPDK setup if needed:
+```bash
+sudo ./scripts/setup.sh
+```
+
+### Initiator cannot connect to NVMe-oF target
+
+Check:
+* The target RDMA IP address.
+* The NVMe-oF port.
+* Firewall settings.
+* RDMA device status.
+* Whether nvmf_tgt is running.
+* Whether the subsystem NQN matches the connection script.
+
+### PASS cannot control CPU power
+
+Check:
+* The cgroup path exists.
+* The SPDK process has been added to the cgroup.
+* `powercap`, `cpupower`, and `perf` are installed.
+* The controller is running with sudo.
+* The CPU policy file exists and matches the target server.
+
+### Power budget changes have no effect
+
+Check:
+* The budget file is in the directory expected by the controller.
+* The file contains only a numeric wattage value.
+* The controller has permission to read the file.
+* The controller is actively running.
 
 ## Citation
 This is the artifact associated with the paper:
