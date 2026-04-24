@@ -1,4 +1,4 @@
-# PASS Artifact Evaluation
+## PASS Artifact Evaluation
 This directory contains artifact for evaluating the PASS system described in the paper: PASS: A Power Adaptive Storage Server.
 
 The artifact includes the following components:
@@ -6,7 +6,7 @@ The artifact includes the following components:
 - The online controller of PASS to enforce power budgets in `online_controller`.
 - Evaluation scripts in `pass_fio_experiments` and `pass_application_benchmarks` to run benchmarks and collect results.
 
-## Evaluation instructions
+### Evaluation instructions
 The artifact provides scripts to run experiments and collect results for all results presented in the paper.
 
 There are two options to evaluate the artifact:
