@@ -127,7 +127,7 @@ The time estimated to run all experiments is around 12 hours. We encourage evalu
 For each experiment, the script will run benchmarks with example input and configuration for each experiment presented in the paper and collect results automatically. The results will be saved in the corresponding directories. There is a referential output file for each experiment. The referential output files are listed in the `<experiment>_ref.txt` files in the corresponding directories.
 
 ## Installation Guide
-PASS is designed to use with (SPDK)[https://spdk.io/]. Please first install SPDK from source then put the PASS online controller (powercap_PASS_profiled.py) to under the directory of SPDK.
+PASS is designed to use with [SPDK](https://spdk.io/). Please first install SPDK from source then put the PASS online controller (powercap_PASS_profiled.py) to under the directory of SPDK.
 
 To run PASS's offline profiler, follow instructions in the cpu_model directory to run offline profile of CPU.
 
